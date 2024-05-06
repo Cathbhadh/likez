@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import requests
 
 # Function to authenticate with access token
@@ -28,17 +29,6 @@ def fetch_data(access_token, user_id):
 
     return data
 
-# Function to count liked posts for each user
-def count_likes(data):
-    like_counts = {}
-    for item in data:
-        user_uuid = item['user_uuid']
-        if user_uuid in like_counts:
-            like_counts[user_uuid] += 1
-        else:
-            like_counts[user_uuid] = 1
-    return like_counts
-
 # Streamlit app
 def main():
     st.title("Liked Posts Analysis")
@@ -50,12 +40,20 @@ def main():
         if access_token and user_id:
             st.text("Fetching data...")
             data = fetch_data(access_token, user_id)
+            
             st.text("Analyzing data...")
-            like_counts = count_likes(data)
+            df = pd.DataFrame(data)
+            
+            user_profile = {}
+            for item in data:
+                user_profile[item['user_uuid']] = item['profile']['name']
+
+            like_counts = df['user_uuid'].value_counts()
 
             st.text("Results:")
             for user_uuid, count in like_counts.items():
-                st.write(f"User UUID: {user_uuid}, Liked Posts Count: {count}")
+                profile_name = user_profile.get(user_uuid, "Unknown")
+                st.write(f"User UUID: {user_uuid}, Profile Name: {profile_name}, Liked Posts Count: {count}")
         else:
             st.warning("Please enter Access Token and User ID.")
 
