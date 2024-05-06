@@ -35,8 +35,9 @@ def main():
             data = fetch_data(user_id, access_token, offset=offset, limit=500)
             if not data:
                 break
-            posts = eval(data)  # assuming the response is a valid Python list of dictionaries
-            all_data.extend([str(post) for post in posts])
+            posts = eval(f'[{data}]')  # Assume the response is a valid Python list of dictionaries
+            for post in posts:
+                all_data.append(str(post))
             offset += 500
 
         liked_posts = count_liked_posts(all_data)
