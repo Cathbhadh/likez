@@ -3,7 +3,8 @@ import requests
 
 def fetch_data(user_id, access_token, offset=0, limit=500, include_nsfw=True):
     url = f"https://api.yodayo.com/v1/users/{user_id}/likes?offset={offset}&limit={limit}&width=600&include_nsfw={include_nsfw}"
-    response = requests.get(url)
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(url, headers=headers)
     if response.status_code == 200:
         return response.text
     else:
@@ -34,7 +35,7 @@ def main():
             data = fetch_data(user_id, access_token, offset=offset, limit=500)
             if not data:
                 break
-            all_data.extend(data.split("\n"))
+            all_data.extend([item for item in data.split("\n") if item])
             offset += 500
 
         liked_posts = count_liked_posts(all_data)
