@@ -12,7 +12,7 @@ def fetch_data(user_id, access_token, offset=0, limit=500, include_nsfw=True):
 
 def count_liked_posts(data):
     liked_posts = {}
-    for post_data in data.split("\n"):
+    for post_data in data:
         if post_data:
             post = eval(post_data)  # assumes the response is a valid Python dictionary
             user_uuid = post['user_uuid']
@@ -32,13 +32,13 @@ def main():
         offset = 0
         all_data = []
         while True:
-            data = fetch_data(user_id, access_token, offset=offset)
+            data = fetch_data(user_id, access_token, offset=offset, limit=500)
             if not data:
                 break
-            all_data.append(data)
+            all_data.extend(data.split("\n"))
             offset += 500
 
-        liked_posts = count_liked_posts("\n".join(all_data))
+        liked_posts = count_liked_posts(all_data)
         st.subheader("Liked Posts Count")
         for user_uuid, info in liked_posts.items():
             st.write(f"{info['name']}: {info['count']}")
