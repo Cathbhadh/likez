@@ -3,8 +3,7 @@ import requests
 
 def fetch_data(user_id, access_token, offset=0, limit=500, include_nsfw=True):
     url = f"https://api.yodayo.com/v1/users/{user_id}/likes?offset={offset}&limit={limit}&width=600&include_nsfw={include_nsfw}"
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers)
+    response = requests.get(url)
     if response.status_code == 200:
         return response.text
     else:
