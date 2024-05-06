@@ -45,7 +45,7 @@ def main():
         liked_posts = count_liked_posts(all_data)
         st.subheader("Liked Posts Count")
         for user_uuid, info in liked_posts.items():
-            st.write(f"{info['name']}: {info['count']}"))
+            st.write(f"{info['name']}: {info['count']}")
 
 if __name__ == "__main__":
     main()
