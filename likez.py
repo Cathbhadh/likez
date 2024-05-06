@@ -42,13 +42,18 @@ def main():
             data = fetch_data(access_token, user_id)
             
             st.text("Analyzing data...")
+            
+            # Construct DataFrame directly from list of dictionaries
             df = pd.DataFrame(data)
             
+            # Count likes per user_uuid
+            like_counts = df['user_uuid'].value_counts()
+            
+            # Collect user profiles
             user_profile = {}
             for item in data:
-                user_profile[item['user_uuid']] = item['profile']['name']
-
-            like_counts = df['user_uuid'].value_counts()
+                if item['user_uuid'] not in user_profile:
+                    user_profile[item['user_uuid']] = item['profile']['name']
 
             st.text("Results:")
             for user_uuid, count in like_counts.items():
