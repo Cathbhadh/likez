@@ -3,8 +3,7 @@ import requests
 
 def fetch_data(user_id, access_token, offset=0, limit=500, include_nsfw=True):
     url = f"https://api.yodayo.com/v1/users/{user_id}/likes?offset={offset}&limit={limit}&width=600&include_nsfw={include_nsfw}"
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers)
+    response = requests.get(url)
     if response.status_code == 200:
         return response.text
     else:
@@ -14,7 +13,7 @@ def count_liked_posts(data):
     liked_posts = {}
     for post_data in data:
         if post_data:
-            post = eval(post_data)  # assumes the response is a valid Python dictionary
+            post = eval(post_data)
             user_uuid = post['user_uuid']
             profile_name = post['profile']['name']
             if user_uuid in liked_posts:
@@ -35,7 +34,8 @@ def main():
             data = fetch_data(user_id, access_token, offset=offset, limit=500)
             if not data:
                 break
-            all_data.extend([item for item in data.split("\n") if item])
+            posts = eval(data)  # assuming the response is a valid Python list of dictionaries
+            all_data.extend([str(post) for post in posts])
             offset += 500
 
         liked_posts = count_liked_posts(all_data)
